@@ -6,6 +6,11 @@
 #include <string.h>
 #include "myLCD.h"
 
+unsigned char usart_getchar()
+{
+	while(!(UCSRA&(1<<RXC)));
+	return UDR;
+}
 //chuong trinh con phat ky tu uart (ham co ban)
 void uart_char_tx(unsigned char chr){
 	if (chr == '\n')
@@ -31,29 +36,21 @@ int main(void){
 	init_LCD();
 	clr_LCD();
 	
-	int x=8205;
-	printf("In lan 1");
-	fprintf(&lcdstd,"www.hocavr.com");
-	move_LCD(2,1);
-	stdout=&lcdstd;
-	printf("In lan 4: %i", x);
-	home_LCD();
-	printf(" Vu Duy Khanh");
+
 	
 	//UART: in ra uart --------------------
-	stdout=&uartstd;
-	printf("Hello world!\n");
-	fprintf(&uartstd,"Dong nay duoc in bang ham \"fprintf\", %i\n", 5678); //su dung ham printf cua stdio
-	printf("Hay nhap 1 phim de kiem tra ma ASCII\n");
+
+	fprintf(&uartstd,"Ket noi thanh cong !\n");
+
 	
 	while(1){
+		fprintf(&uartstd," Test !");
+		_delay_ms(2000);
 		
 	};
 }
 ISR(USART_RXC_vect){ //trinh phuc vu ngat USART
 	//In ma ASCII cua phim duoc nhan
-	char temp=UDR;
-	int a=2000;
-	
-	fprintf(&uartstd,"Ma ASCII: %d\n", a);
+	char a=usart_getchar();
+	fprintf(&uartstd,"%c\n", a);
 }
